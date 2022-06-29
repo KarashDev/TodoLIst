@@ -1,7 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using TodoLIst.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+string connection = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
 builder.Services.AddControllersWithViews();
+builder.Services.AddMvc();
+
 
 var app = builder.Build();
 
@@ -24,4 +31,10 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+
 app.Run();
+
+
+
+
+

@@ -1,8 +1,87 @@
-﻿@{
+﻿@*@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+</div>*@
+
+
+
+
+@*
+@model IEnumerable<TodoLIst.Models.TodoEntry>
+@{
+    //ViewData["Title"] = "Список смартфонов";
+    Layout = null;
+}
+<!DOCTYPE html>
+ 
+<html>
+<head>
+    <title>Список задач</title>
+</head>
+<body>
+    <h3>Заметки</h3>
+    <table>
+        <tr>
+            <td>Айди</td>
+            <td>Текст</td>
+            <td>Статус</td>
+            <td></td>
+        </tr>
+        @foreach (var entry in Model)
+            {
+            <tr>
+                <td>@entry.Id</td>
+                <td>@entry.Text</td>
+                <td>@entry.isActive</td>
+                <td><a href="~/Home/Buy/@entry.Id">Купить</a></td>
+            </tr>
+        }
+    </table>
+</body>
+</html>
+*@
+
+
+@model IEnumerable<TodoLIst.Models.TodoEntry>  
+@{  
+  ViewData["Title"] = "Index";  
+}  
+<h2>Index</h2>  
+<p>  
+  <a asp-action="Create">Create New</a>  
+</p>  
+<table class="table">  
+  <thead>  
+    <tr>  
+      <th>  
+        @Html.DisplayNameFor(model => model.Id)  
+      </th>  
+      <th>  
+        @Html.DisplayNameFor(model => model.Text)  
+      </th>  
+      <th></th>  
+    </tr>  
+  </thead>  
+  <tbody>  
+    @foreach (var item in Model)  
+    {  
+      <tr>  
+        <td>  
+          @Html.DisplayFor(modelItem => item.Id)  
+        </td>  
+        <td>  
+          @Html.DisplayFor(modelItem => item.Text)  
+        </td>  
+        <td>  
+          @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |  
+          @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |  
+          @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })  
+        </td>  
+      </tr>  
+    }  
+  </tbody>  
+</table>   
