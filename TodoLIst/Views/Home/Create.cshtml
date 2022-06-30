@@ -1,0 +1,15 @@
+﻿@model TodoLIst.Models.TodoEntry
+@{
+    ViewData["Title"] = "Index";
+}
+
+@using (Html.BeginForm("CreateEntry", "Home", FormMethod.Post))
+{
+    <div class="input-group">
+        @Html.TextBoxFor(m => m.Text, new {@Value = "Enter Name", @class = "red" })
+        @Html.CheckBoxFor(m => m.isActive)
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-success"></button>
+        </div>
+    </div>
+}

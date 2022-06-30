@@ -3,19 +3,22 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 using System.Diagnostics;
 //using System.Web.Http.OData;
 using TodoLIst.Models;
+using TodoLIst.RabbitMQ;
 
 namespace TodoLIst.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        IRabbitMqService mqService;
         ApplicationContext db;
 
         // В контроллер ставим контекст подключения к базе 
-        public HomeController(ApplicationContext context, ILogger<HomeController> logger)
+        public HomeController(ApplicationContext context, ILogger<HomeController> logger, IRabbitMqService mqService)
         {
             _logger = logger;
             db = context;
+            this.mqService = mqService;
         }
 
         public IActionResult Index()
@@ -50,17 +53,42 @@ namespace TodoLIst.Controllers
 
                 db.SaveChanges();
             }
+
+            //// Начало запроса (client.BaseAddress) автоматически присоединяется к остальной строке запроса
+            //var response = client.GetAsync($"api/Buffet/get_prod_categories/{vendor}").Result;
+            //var responseString = response.Content.ReadAsStringAsync().Result;
+
+            //// BuffetException - логическая ошибка; Exception - серверная ошибка 
+            //if (response.IsSuccessStatusCode)
+            //{
+            //    return JsonConvert.DeserializeObject<List<CategoryProd>>(responseString);
+            //}
+
             return View(db.TodoEntries.ToList());
         }
 
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create()
         {
             try
             {
-                db.TodoEntries.Add(new TodoEntry() { Text=collection["Text"]});
+                return View("~/Views/Home/Create.cshtml");
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        public ActionResult CreateEntry(TodoEntry entry)
+        {
+            try
+            {
+                //entry.Id = (db.TodoEntries.OrderBy(e => e).Last().Id + 1);
+                db.TodoEntries.Add(entry);
+                mqService.SendMessage(entry);
+
+                db.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
             }
@@ -70,10 +98,58 @@ namespace TodoLIst.Controllers
             }
         }
 
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
+        public ActionResult Edit(TodoEntry entry)
+        {
+            try
+            {
+                return View("~/Views/Home/Edit.cshtml", entry);
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        public ActionResult EditEntry(TodoEntry editedEntry)
+        {
+            try
+            {
+                var entryToEdit = db.TodoEntries.FirstOrDefault(e => e.Id == editedEntry.Id);
+                entryToEdit.Text = editedEntry.Text;
+                mqService.SendMessage(entryToEdit);
+
+                db.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        public ActionResult DeleteEntry(TodoEntry entry)
+        {
+            try
+            {
+                if (db.TodoEntries.Contains(entry))
+                {
+                    mqService.SendMessage(entry);
+
+                    db.TodoEntries.Remove(entry);
+
+                    db.SaveChanges();
+                }
+
+                //return View("~/Views/Home/Create.cshtml");
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
 
         public IActionResult Privacy()
         {
