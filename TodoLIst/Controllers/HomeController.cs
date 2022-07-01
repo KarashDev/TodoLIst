@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using System.Diagnostics;
-//using System.Web.Http.OData;
 using TodoLIst.Models;
 using TodoLIst.RabbitMQ;
 
@@ -32,37 +31,27 @@ namespace TodoLIst.Controllers
                    new TodoEntry
                    {
                        Text  = "Сходить в магазин",
-                       isActive = true,
+                       isHighPriority = true,
                    },
                    new TodoEntry
                    {
                        Text  = "Написать заметки",
-                       isActive = false,
+                       isHighPriority = false,
                    },
                    new TodoEntry
                    {
                        Text  = "Полюбить C#",
-                       isActive = true,
+                       isHighPriority = true,
                    },
                    new TodoEntry
                    {
-                       Text  = "Возненавидеть JS",
-                       isActive = false,
+                       Text  = "Неполюбить Assembler",
+                       isHighPriority = false,
                    }
                );
 
                 db.SaveChanges();
             }
-
-            //// Начало запроса (client.BaseAddress) автоматически присоединяется к остальной строке запроса
-            //var response = client.GetAsync($"api/Buffet/get_prod_categories/{vendor}").Result;
-            //var responseString = response.Content.ReadAsStringAsync().Result;
-
-            //// BuffetException - логическая ошибка; Exception - серверная ошибка 
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    return JsonConvert.DeserializeObject<List<CategoryProd>>(responseString);
-            //}
 
             return View(db.TodoEntries.ToList());
         }
@@ -84,9 +73,9 @@ namespace TodoLIst.Controllers
         {
             try
             {
-                //entry.Id = (db.TodoEntries.OrderBy(e => e).Last().Id + 1);
                 db.TodoEntries.Add(entry);
-                mqService.SendMessage(entry);
+
+                //mqService.SendMessage(entry);
 
                 db.SaveChanges();
 
@@ -116,7 +105,8 @@ namespace TodoLIst.Controllers
             {
                 var entryToEdit = db.TodoEntries.FirstOrDefault(e => e.Id == editedEntry.Id);
                 entryToEdit.Text = editedEntry.Text;
-                mqService.SendMessage(entryToEdit);
+                entryToEdit.isHighPriority = editedEntry.isHighPriority;
+                //mqService.SendMessage(entryToEdit);
 
                 db.SaveChanges();
 
@@ -134,14 +124,13 @@ namespace TodoLIst.Controllers
             {
                 if (db.TodoEntries.Contains(entry))
                 {
-                    mqService.SendMessage(entry);
+                    //mqService.SendMessage(entry);
 
                     db.TodoEntries.Remove(entry);
 
                     db.SaveChanges();
                 }
 
-                //return View("~/Views/Home/Create.cshtml");
                 return RedirectToAction(nameof(Index));
             }
             catch

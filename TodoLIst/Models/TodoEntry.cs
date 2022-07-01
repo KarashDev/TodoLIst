@@ -8,6 +8,7 @@ namespace TodoLIst.Models
         public int Id { get; set; }
 
         public string Text { get; set; }
-        public bool isActive { get; set; }
+
+        public bool isHighPriority { get; set; }
     }
 }

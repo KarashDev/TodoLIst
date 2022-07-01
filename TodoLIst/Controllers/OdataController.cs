@@ -16,10 +16,6 @@ namespace TodoLIst.Controllers
             this.db = db;
         }
 
-        //public IActionResult Index()
-        //{
-        //    //return View();
-        //}
 
         [EnableQuery]
         [HttpGet("get_todolist")]
@@ -32,22 +28,22 @@ namespace TodoLIst.Controllers
                    new TodoEntry
                    {
                        Text  = "Сходить в магазин",
-                       isActive = true,
+                       isHighPriority = true,
                    },
                    new TodoEntry
                    {
                        Text  = "Написать заметки",
-                       isActive = false,
+                       isHighPriority = false,
                    },
                    new TodoEntry
                    {
                        Text  = "Полюбить C#",
-                       isActive = true,
+                       isHighPriority = true,
                    },
                    new TodoEntry
                    {
                        Text  = "Возненавидеть JS",
-                       isActive = false,
+                       isHighPriority = false,
                    }
                );
 
@@ -56,28 +52,6 @@ namespace TodoLIst.Controllers
             return db.TodoEntries.ToList();
         }
 
-        //[EnableQuery]
-        //public SingleResult<Product> Get([FromODataUri] int key)
-        //{
-        //    IQueryable<Product> result = db.Products.Where(p => p.Id == key);
-        //    return SingleResult.Create(result);
-        //}
-
-
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
 
 }
