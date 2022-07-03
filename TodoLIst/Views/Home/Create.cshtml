@@ -6,10 +6,14 @@
 @using (Html.BeginForm("CreateEntry", "Home", FormMethod.Post))
 {
     <div class="input-group">
+        @Html.LabelFor(m => m.Text, "Введите текст заметки:  ")
         @Html.TextBoxFor(m => m.Text, new {@Value = "Enter Name", @class = "red" })
-        @Html.CheckBoxFor(m => m.isHighPriority)
         <div class="input-group-append">
-            <button type="submit" class="btn btn-success"></button>
+            <button type="submit" class="btn btn-success" style="margin-left:20px; margin-right: 20px; background-color:aliceblue;color:black; font-size: 10px">
+                Принять
+            </button>
         </div>
+        <label style="margin-right: 10px">Высокий приоритет?</label>
+        @Html.CheckBoxFor(m => m.isHighPriority)
     </div>
 }

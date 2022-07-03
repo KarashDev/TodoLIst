@@ -75,7 +75,7 @@ namespace TodoLIst.Controllers
             {
                 db.TodoEntries.Add(entry);
 
-                //mqService.SendMessage(entry);
+                mqService.SendMessage(entry, "CREATED");
 
                 db.SaveChanges();
 
@@ -106,7 +106,8 @@ namespace TodoLIst.Controllers
                 var entryToEdit = db.TodoEntries.FirstOrDefault(e => e.Id == editedEntry.Id);
                 entryToEdit.Text = editedEntry.Text;
                 entryToEdit.isHighPriority = editedEntry.isHighPriority;
-                //mqService.SendMessage(entryToEdit);
+
+                mqService.SendMessage(entryToEdit, "EDITED");
 
                 db.SaveChanges();
 
@@ -124,7 +125,7 @@ namespace TodoLIst.Controllers
             {
                 if (db.TodoEntries.Contains(entry))
                 {
-                    //mqService.SendMessage(entry);
+                    mqService.SendMessage(entry, "DELETED");
 
                     db.TodoEntries.Remove(entry);
 
